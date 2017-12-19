@@ -9,8 +9,18 @@ class BooksApp extends Component {
   }
   componentDidMount() {
     BooksAPI.getAll().then((books) => {
-      //console.log(books);
-      this.setState({ books });
+      let shelves = books.reduce((acc,book)=>{
+        if (!acc.find(uniqueshelf=> (uniqueshelf === book.shelf)))
+          acc.push(book.shelf);
+        return acc;
+      },[]);
+      console.log(shelves);
+      let shelfWiseBooks = shelves.reduce((acc,shelf)=>{
+        acc.push({shelf, booksOnShelf: books.filter((book) => book.shelf === shelf)})
+        return acc;
+      },[])
+      this.setState({ books: shelfWiseBooks});
+      console.log(shelfWiseBooks);
     })
   }
 
@@ -23,9 +33,9 @@ class BooksApp extends Component {
           </div>
           <div className="list-books-content">
             <div>
-              <BookShelf shelfTitle="Currently Reading" shelfBooks={this.state.books.filter((book) => book.shelf === 'currentlyReading')} />
-              <BookShelf shelfTitle="Want To Read" shelfBooks={this.state.books.filter((book) => book.shelf === 'wantToRead')} />
-              <BookShelf shelfTitle="Read" shelfBooks={this.state.books.filter((book) => book.shelf === 'read')} />
+              {this.state.books.map(shelfWithBooks=>(
+                <BookShelf key={shelfWithBooks.shelf} shelfTitle={shelfWithBooks.shelf} shelfBooks={shelfWithBooks.booksOnShelf} />
+              ))}
             </div>
           </div>
           <div className="open-search">

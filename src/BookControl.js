@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 class BooksApp extends Component {
+  static propTypes = {
+    onShelfChange: PropTypes.func.isRequired,
+    bookDetails: PropTypes.object.isRequired
+  }
   state = {
     shelf: this.props.bookDetails.shelf
   }
@@ -8,7 +13,6 @@ class BooksApp extends Component {
   shelfChange = (book, newShelf) => {
     this.props.onShelfChange(book, newShelf);
     this.setState({shelf: newShelf});
-    console.log('newShelf' + newShelf + '; inside: ' +  this.state.shelf);
   }
 
   render() {

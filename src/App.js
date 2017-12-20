@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import './App.css';
 import { Route, Link } from 'react-router-dom';
+import './App.css';
+import * as BooksAPI from './BooksAPI';
 import BookShelf from './BookShelf';
 import SearchBooks from './SearchBooks';
-import * as BooksAPI from './BooksAPI';
+
 
 class BooksApp extends Component {
   state = {
@@ -12,7 +13,6 @@ class BooksApp extends Component {
 
   componentDidMount() {
     BooksAPI.getAll().then((books) => {
-      //console.log(books);
       this.setState({ books });
     })
   }
@@ -20,7 +20,6 @@ class BooksApp extends Component {
   shelfChange = (selectedBook, newShelf) => {
     let tempBooks = this.state.books;
     let bookIndex = this.state.books.findIndex(book => book.id === selectedBook.id);
-    console.log(selectedBook.id+','+bookIndex+','+newShelf);
     if (bookIndex !== -1) {
       tempBooks[bookIndex].shelf = newShelf;
     }

@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
-import BookDisplay from './BookDisplay';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+
+import BookDisplay from './BookDisplay';
 
 class SearchBooks extends Component {
+  static propTypes = {
+    onShelfChange: PropTypes.func.isRequired,
+    onSearch: PropTypes.func.isRequired,
+    shelfBooks: PropTypes.array.isRequired
+  }
+
   state = {
     query: '',
-    shelfBooks:this.props.shelfBooks,
     resultBooks: [],
   }
 
@@ -27,13 +34,12 @@ class SearchBooks extends Component {
       this.props.onSearch(query)
         .then((books) => {
           if (books.length > 0) {
-            this.setState(()=>{return {shelfBooks:this.props.shelfBooks}});
-            let resultBooks = this.mapShelves(this.state.shelfBooks, books);
-            this.setState(()=>{return {resultBooks}});
+            let resultBooks = this.mapShelves(this.props.shelfBooks, books);
+            this.setState(() => { return { resultBooks } });
           }
         })
-        .catch((e)=>{
-          this.setState(()=>{return {resultBooks: []}});
+        .catch((e) => {
+          this.setState(() => { return { resultBooks: [] } });
         });
     }
   }
@@ -47,29 +53,29 @@ class SearchBooks extends Component {
 
     return (
       <div className="search-books">
-      <div className="search-books-bar">
-        <Link className='close-search' to='/'>Close</Link>
+        <div className="search-books-bar">
+          <Link className='close-search' to='/'>Close</Link>
           <div className="search-books-input-wrapper">
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder="Search by title or author"
               value={query}
               onChange={(event) => this.updateQuery(event.target.value)}
             />
           </div>
+        </div>
+        <div className="search-books-results">
+          {!this.state.resultBooks ?
+            <h3>Loading</h3> :
+            <ol className="books-grid">
+              {this.state.resultBooks.map(book => (
+                <li key={book.id}>
+                  <BookDisplay onShelfChange={this.props.onShelfChange} bookDetails={book} />
+                </li>))}
+            </ol>
+          }
+        </div>
       </div>
-      <div className="search-books-results">
-        {!this.state.resultBooks ?
-          <h3>Loading</h3>:
-          <ol className="books-grid">
-            {this.state.resultBooks.map(book => (
-              <li key={book.id}>
-                <BookDisplay onShelfChange={this.props.onShelfChange} bookDetails={book} />
-              </li>))}
-          </ol>
-        }
-      </div>
-    </div>
     );
   }
 }

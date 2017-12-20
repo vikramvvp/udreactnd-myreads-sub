@@ -2,7 +2,7 @@
 
 This is my React Nanodegree project MyReads
 
-## TL;DR
+## Short Description
 
 To check out the project:
 

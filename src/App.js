@@ -17,11 +17,17 @@ class BooksApp extends Component {
     })
   }
 
-  shelfChange = (bookid, newShelf) => {
-    let bookIndex = this.state.books.findIndex(book => book.id === bookid);
-    //console.log(bookid+','+bookIndex+','+newShelf);
+  shelfChange = (selectedBook, newShelf) => {
     let tempBooks = this.state.books;
-    tempBooks[bookIndex].shelf = newShelf;
+    let bookIndex = this.state.books.findIndex(book => book.id === selectedBook.id);
+    console.log(selectedBook.id+','+bookIndex+','+newShelf);
+    if (bookIndex !== -1) {
+      tempBooks[bookIndex].shelf = newShelf;
+    }
+    else {
+      selectedBook.shelf = newShelf;
+      tempBooks.push(selectedBook);
+    }
     this.setState({ books: tempBooks });
   }
 

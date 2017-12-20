@@ -5,34 +5,41 @@ import { Link } from 'react-router-dom';
 class SearchBooks extends Component {
   state = {
     query: '',
-    resultBooks: []
+    shelfBooks:this.props.shelfBooks,
+    resultBooks: [],
+  }
+
+  mapShelves = (shelfBooks, searchResults) => {
+    return searchResults.map(book => {
+      let shelfBookIndex = shelfBooks.findIndex(sbook => sbook.id === book.id);
+      if (shelfBookIndex >= 0)
+        book.shelf = shelfBooks[shelfBookIndex].shelf;
+      else
+        book.shelf = 'none';
+      return book;
+    });
   }
 
   updateQuery = (query) => {
-    this.setState({ query: query.trim() })
-  }
-
-  handleSubmit = (e) => {
-    e.preventDefault()
-    const { query } = this.state;
-    const { shelfBooks, onSearch } = this.props;
+    this.setState({ query: query.trim() });
+    console.log('query: ' + query);
     if (query) {
-      onSearch(query).then((books) => {
-        console.log(books);
-        let resultBooks = books.map(book => {
-          let shelfBookIndex = shelfBooks.findIndex(sbook => sbook.id === book.id);
-          if (shelfBookIndex >= 0)
-            book.shelf = shelfBooks[shelfBookIndex].shelf;
-          return book;
+      this.props.onSearch(query)
+        .then((books) => {
+          if (books.length > 0) {
+            this.setState(()=>{return {shelfBooks:this.props.shelfBooks}});
+            let resultBooks = this.mapShelves(this.state.shelfBooks, books);
+            this.setState(()=>{return {resultBooks}});
+          }
+        })
+        .catch((e)=>{
+          this.setState(()=>{return {resultBooks: []}});
         });
-        this.setState({resultBooks});
-      });
     }
-    
   }
 
   componentDidMount() {
-    
+    this.updateQuery(this.state.query);
   }
 
   render() {
@@ -42,7 +49,6 @@ class SearchBooks extends Component {
       <div className="search-books">
       <div className="search-books-bar">
         <Link className='close-search' to='/'>Close</Link>
-        <form onSubmit={this.handleSubmit}>
           <div className="search-books-input-wrapper">
             <input 
               type="text" 
@@ -51,16 +57,17 @@ class SearchBooks extends Component {
               onChange={(event) => this.updateQuery(event.target.value)}
             />
           </div>
-        </form>
       </div>
       <div className="search-books-results">
-        <ol className="books-grid">
-        {this.state.resultBooks.map(book => (
-          <li key={book.id}>
-            <BookDisplay onShelfChange={this.props.onShelfChange} bookDetails={book} />
-          </li>
-        ))}
-        </ol>
+        {!this.state.resultBooks ?
+          <h3>Loading</h3>:
+          <ol className="books-grid">
+            {this.state.resultBooks.map(book => (
+              <li key={book.id}>
+                <BookDisplay onShelfChange={this.props.onShelfChange} bookDetails={book} />
+              </li>))}
+          </ol>
+        }
       </div>
     </div>
     );

@@ -3,14 +3,16 @@ import BookControl from './BookControl';
 
 class BookDisplay extends Component {
   render() {
+    const { bookDetails, onShelfChange } = this.props;
+    const {title, authors, imageLinks} = bookDetails;
     return (
       <div className="book">
       <div className="book-top">
-        <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url("${this.props.bookDetails.imageLinks.thumbnail}")` }}></div>
-        <BookControl bookDetails={this.props.bookDetails} onShelfChange={this.props.onShelfChange}/>
+        <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url("${imageLinks?imageLinks.thumbnail:''}")` }}></div>
+        <BookControl bookDetails={bookDetails} onShelfChange={onShelfChange}/>
       </div>
-      <div className="book-title">{this.props.bookDetails.title}</div>
-      <div className="book-authors">{this.props.bookDetails.authors?this.props.bookDetails.authors.reduce((acc,author)=>((acc===''?'':acc + ', ') + author), ''):''}</div>
+      <div className="book-title">{title}</div>
+      <div className="book-authors">{authors?authors.reduce((acc,author)=>((acc===''?'':acc + ', ') + author), ''):''}</div>
     </div>
     );
   }

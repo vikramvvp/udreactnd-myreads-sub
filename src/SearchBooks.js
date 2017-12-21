@@ -5,6 +5,13 @@ import PropTypes from 'prop-types';
 import BookDisplay from './BookDisplay';
 
 class SearchBooks extends Component {
+
+  // Ref: https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
+  constructor(props) {
+    super(props);
+    this.updateQuery = this.debounce(this.updateQuery, 100);
+  }
+
   static propTypes = {
     onShelfChange: PropTypes.func.isRequired,
     onSearch: PropTypes.func.isRequired,
@@ -27,9 +34,20 @@ class SearchBooks extends Component {
     });
   }
 
-  updateQuery = (query) => {
+  // Ref: https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
+  debounce(fn, delay) {
+    var timer = null;
+    return function () {
+      var context = this, args = arguments;
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        fn.apply(context, args);
+      }, delay);
+    };
+  }
+
+  updateQuery(query) {
     this.setState({ query: query.trim() });
-    console.log('query: ' + query);
     if (query) {
       this.props.onSearch(query)
         .then((books) => {

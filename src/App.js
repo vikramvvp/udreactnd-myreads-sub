@@ -27,7 +27,9 @@ class BooksApp extends Component {
       selectedBook.shelf = newShelf;
       tempBooks.push(selectedBook);
     }
-    this.setState({ books: tempBooks });
+    BooksAPI.update(selectedBook, newShelf).then(()=>{
+      this.setState({ books: tempBooks });
+    })
   }
 
   searchBook = (query) => {

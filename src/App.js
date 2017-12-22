@@ -12,23 +12,13 @@ class BooksApp extends Component {
   }
 
   componentDidMount() {
-    BooksAPI.getAll().then((books) => {
-      this.setState({ books });
-    })
+    BooksAPI.getAll().then(books => this.setState({ books }))
   }
 
   shelfChange = (selectedBook, newShelf) => {
-    let tempBooks = this.state.books;
-    let bookIndex = this.state.books.findIndex(book => book.id === selectedBook.id);
-    if (bookIndex !== -1) {
-      tempBooks[bookIndex].shelf = newShelf;
-    }
-    else {
-      selectedBook.shelf = newShelf;
-      tempBooks.push(selectedBook);
-    }
     BooksAPI.update(selectedBook, newShelf).then(()=>{
-      this.setState({ books: tempBooks });
+      selectedBook.shelf = newShelf;
+      this.setState({ books: this.state.books.filter(book => book.id !== selectedBook.id).concat([selectedBook]) });
     })
   }
 
@@ -46,9 +36,9 @@ class BooksApp extends Component {
             </div>
             <div className="list-books-content">
               <div>
-                <BookShelf onShelfChange={this.shelfChange} shelfTitle="Currently Reading" shelfBooks={this.state.books.filter((book) => book.shelf === 'currentlyReading')} />
-                <BookShelf onShelfChange={this.shelfChange} shelfTitle="Want To Read" shelfBooks={this.state.books.filter((book) => book.shelf === 'wantToRead')} />
-                <BookShelf onShelfChange={this.shelfChange} shelfTitle="Read" shelfBooks={this.state.books.filter((book) => book.shelf === 'read')} />
+                <BookShelf onShelfChange={this.shelfChange} shelfTitle="Currently Reading" shelfBooks={this.state.books.filter(book => book.shelf === 'currentlyReading')} />
+                <BookShelf onShelfChange={this.shelfChange} shelfTitle="Want To Read" shelfBooks={this.state.books.filter(book => book.shelf === 'wantToRead')} />
+                <BookShelf onShelfChange={this.shelfChange} shelfTitle="Read" shelfBooks={this.state.books.filter(book => book.shelf === 'read')} />
               </div>
             </div>
             <div className="open-search">

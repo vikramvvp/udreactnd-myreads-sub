@@ -9,11 +9,12 @@ const BookShelf = ({ shelfTitle, shelfBooks, onShelfChange }) => {
       <h2 className="bookshelf-title">{shelfTitle}</h2>
       <div className="bookshelf-books">
         <ol className="books-grid">
-          {shelfBooks.map(book => (
-            <li key={book.id}>
+          {shelfBooks.map(book => {
+            let {id} = book;
+            return (<li key={id}>
               <BookDisplay onShelfChange={onShelfChange} bookDetails={book} />
-            </li>
-          ))}
+            </li>)
+          })}
         </ol>
       </div>
     </div>

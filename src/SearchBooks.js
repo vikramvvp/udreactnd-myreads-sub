@@ -47,10 +47,11 @@ class SearchBooks extends Component {
   }
 
   updateQuery(query) {
-    this.setState({ query: query.trim() });
+    query = query.trim();
+    this.setState({ query });
     if (query) {
       this.props.onSearch(query)
-        .then((books) => {
+        .then(books => {
           if (books.length > 0) {
             let resultBooks = this.mapShelves(this.props.shelfBooks, books);
             this.setState(() => { return { resultBooks } });
@@ -78,7 +79,7 @@ class SearchBooks extends Component {
               type="text"
               placeholder="Search by title or author"
               value={query}
-              onChange={(event) => this.updateQuery(event.target.value)}
+              onChange={event => this.updateQuery(event.target.value)}
             />
           </div>
         </div>
